@@ -1,0 +1,31 @@
+{
+  "organization": "trivago N.V.",
+  "repositories": [
+    {
+      "repo": "my-repo",
+      "min_approvals": 2
+    },
+    {
+      "repo": "my-other-repo",
+      "min_approvals": 2
+    }
+  ],
+  "notifications": {
+    "users": {
+      "blacklist": ["leave_me_alone"]
+    },
+    "emojis": {
+      "approved": ":mcheck:",
+      "changes_requested": ":face_with_symbols_on_mouth:",
+      "commented": ":speech_balloon:",
+      "inactive": ":sleeping:",
+      "attention": ":police_siren:"
+    }
+  },
+  "users": {
+    "slack_mapping": {
+      "git_user_1": "slack_handle_1",
+      "git_user_2": "slack_handle_2"
+    }
+  }
+}
