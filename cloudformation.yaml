@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: 2010-09-09
+Transform: AWS::Serverless-2016-10-31
+Description: Send Open PRs to SNS
+
+Parameters:
+  Organization:
+    Type: String
+    Description: GitHub Organization
+  GitHubToken:
+    Type: String
+    Description: GitHub Token for the API calls
+  BucketName:
+    Type: String
+    Description: Bucket Name to get the config
+  ConfigFile:
+    Type: String
+    Description: The config file for the notifications
+    Default: configs/pr-notify-config.json
+  Owner:
+    Type: String
+    Description: The name of the owner, used to separate the Glue scripts
+  Environment:
+    Type: String
+    Description: Define environment
+  MemorySize:
+    Description: The standard memory size for lambdas in MBs.
+    Type: Number
+    Default: 1024
+  TimeOut:
+    Description: The standard lambda timeout in seconds
+    Type: Number
+    Default: 900
+  CronExpression:
+    Type: String
+    Description: Cron Expression for the PR Notifications
+    Default: "cron(0 9 ? * MON-FRI *)"
+
+Resources:
+  NotificationSNS:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub
+        - ${StackName}--sns
+        - { StackName: !Ref "AWS::StackName" }
+      DisplayName: !Sub
+        - ${StackName}--sns
+        - { StackName: !Ref "AWS::StackName" }
+
+  PRNotifyLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ../_build/
+      Description: Sends open PRs list to SNS
+      Environment:
+        Variables:
+          ORGANIZATION: !Ref Organization
+          GITHUB_TOKEN: !Ref GitHubToken
+          SNS_TOPIC: !Ref NotificationSNS
+          BUCKET_NAME: !Ref BucketName
+          CONFIG_FILE: !Ref ConfigFile
+      FunctionName: !Sub
+        - ${StackName}--pr-notify
+        - { StackName: !Ref "AWS::StackName" }
+      Handler: pr_notify.lambda.handler
+      MemorySize: !Sub ${MemorySize}
+      ReservedConcurrentExecutions: 1
+      Role: !GetAtt PRNotifyLambdaRole.Arn
+      Runtime: python3.7
+      Timeout: !Sub ${TimeOut}
+      Events:
+        CloudWatch:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref CronExpression
+
+  PRNotifyLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - !ImportValue policy--SyslogToCloudwatch
+      Policies:
+        - PolicyName: !Sub
+                - ${StackName}--lambda-sns-policy
+                - { StackName: !Ref "AWS::StackName" }
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                  - sns:Subscribe
+                Resource:
+                  - !Ref NotificationSNS
+              - Effect: Allow
+                Action:
+                  - s3:Get*
+                Resource:
+                  - "*"
