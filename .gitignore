@@ -130,5 +130,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Idea Projects
+# Projects
 .idea
+.vscode
