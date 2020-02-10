@@ -1,5 +1,8 @@
 {
-  "organization": "trivago N.V.",
+  "organization": "my-org",
+  "global_min_approvals": 2,
+  "show_open_since": true,
+  "max_names_limit": 2,
   "repositories": [
     {
       "repo": "my-repo",
@@ -10,17 +13,18 @@
       "min_approvals": 2
     }
   ],
+  "emojis": {
+    "approved": ":mcheck:",
+    "changes_requested": ":face_with_symbols_on_mouth:",
+    "commented": ":speech_balloon:",
+    "inactive": ":sleeping:",
+    "attention": ":police_siren:"
+  },
   "notifications": {
     "users": {
       "blacklist": ["leave_me_alone"]
-    },
-    "emojis": {
-      "approved": ":mcheck:",
-      "changes_requested": ":face_with_symbols_on_mouth:",
-      "commented": ":speech_balloon:",
-      "inactive": ":sleeping:",
-      "attention": ":police_siren:"
     }
+
   },
   "users": {
     "slack_mapping": {
