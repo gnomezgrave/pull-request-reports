@@ -1,15 +1,10 @@
-from github import PullRequest
-
-from config import Config
-from formatters import NameFormatter
-
-
 class PullFormatter:
-    def __init__(self, config: Config, name_formatter: NameFormatter):
+    def __init__(self, config, name_formatter):
         self._config = config
         self._name_formatter = name_formatter
 
-    def format(self, pull: PullRequest, config, min_pr_approvals):
+    def format(self, pull, config):
+        min_pr_approvals = config.min_approvals
 
         pull_title = f"<{pull.html_url}|*{pull.title}*> ({pull.created_at.strftime('%Y-%b-%d')}) \n"
 
