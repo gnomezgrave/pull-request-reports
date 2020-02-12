@@ -6,6 +6,7 @@ import boto3
 from github import Github
 from config import Config
 
+from models import Repo
 from formatters import NameFormatter, PullFormatter, RepoFormatter
 
 NAME_LIST_LIMIT = 3
@@ -45,7 +46,8 @@ def handler(event, context, resources=os.environ):
     for repo in repositories:
         repo_name = repo["repo"]
         git_repo = current_org.get_repo(repo_name)
-        repo_formatter.format(repo=git_repo)
+        repo = Repo(git_repo)
+        repo_formatter.format(repo=repo)
 
     if total_pr_count == 0:
         print("No open PRs. Good job!")
@@ -54,7 +56,7 @@ def handler(event, context, resources=os.environ):
     print("Message to SNS", repo_details)
 
 
-
+handler(None, None)
 
 
 
