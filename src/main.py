@@ -1,8 +1,6 @@
 import json
 import os
 
-import boto3
-
 from github import Github
 from config import Config
 
@@ -10,9 +8,6 @@ from models import Repo
 from formatters import NameFormatter, PullFormatter, RepoFormatter
 
 NAME_LIST_LIMIT = 3
-
-sns_client = boto3.client('sns')
-
 
 def handler(event, context, resources=os.environ):
 
@@ -57,7 +52,6 @@ def handler(event, context, resources=os.environ):
 
 
 handler(None, None)
-
 
 
 

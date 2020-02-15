@@ -6,7 +6,7 @@ class PullFormatter:
     def format(self, pull, config):
         min_pr_approvals = config.min_approvals
 
-        pull_title = f"<{pull.html_url}|*{pull.title}*> ({pull.created_at.strftime('%Y-%b-%d')}) \n"
+        pull_title = f"<{pull.url}|*{pull.title}*> ({pull.created_at.strftime('%Y-%b-%d')}) \n"
 
         reviews = self._get_reviews(pull)
         description = ""

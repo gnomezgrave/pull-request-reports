@@ -1,6 +1,5 @@
 from models import Pull
 
-
 class Repo:
     def __init__(self, git_repo):
         self._repo = git_repo
