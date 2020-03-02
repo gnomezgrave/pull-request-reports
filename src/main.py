@@ -5,10 +5,8 @@ from github import Github
 from config import Config
 
 from models import Repo
-from formatters import NameFormatter, PullFormatter, RepoFormatter
-from formatters.slack import SlackFormatter
-
-NAME_LIST_LIMIT = 3
+from formatters import NameFormatter
+from formatters.slack import PullFormatter, RepoFormatter, SlackFormatter
 
 
 def handler(event, context, resources=os.environ):
