@@ -6,13 +6,16 @@ class PullFormatter:
 
     def format(self, pull, name_formatter):
         min_pr_approvals = self._config.min_approvals
+        delta = datetime.today() - pull.created_at
 
         if self._config.show_open_since:
-            date_suffix = self._get_dates_diff(pull.created_at, datetime.today())
+            date_suffix = self._get_dates_diff_str(delta)
         else:
             date_suffix = pull.created_at.strftime('%Y-%b-%d')
 
-        pull_title = f"<{pull.url}|*{pull.title}*> ({date_suffix}) \n"
+        warning_suffix = f" {self._config.get_emoji_for_warnings(delta.days)}" if self._config.show_pr_warnings else ""
+
+        pull_title = f"<{pull.url}|*{pull.title}*> ({date_suffix}){warning_suffix}\n"
 
         reviews = pull.get_review_users()
         description = ""
@@ -40,9 +43,8 @@ class PullFormatter:
 
         return f"\t{pull_title}{description}"
 
-    def _get_dates_diff(self, start_date, end_date):
-        delta = end_date - start_date
-        if delta.days == 0:
+    def _get_dates_diff_str(self, time_delta):
+        if time_delta.days == 0:
             return "today"
-        elif delta.days > 0:
-            return f"{delta.days} day{'s' if delta.days > 1 else ''} ago"
+        elif time_delta.days > 0:
+            return f"{time_delta.days} day{'s' if time_delta.days > 1 else ''} ago"
