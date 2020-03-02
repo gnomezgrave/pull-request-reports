@@ -36,17 +36,17 @@ def handler(event, context, resources=os.environ):
     repo_details = ""
     total_pr_count = 0
 
-    name_formatter = NameFormatter()
-    slack_formatter = SlackFormatter()
-    pull_formatter = PullFormatter(config, name_formatter)
-    repo_formatter = RepoFormatter(config, pull_formatter)
+    name_formatter = NameFormatter(config)
+    pull_formatter = PullFormatter(config)
+    repo_formatter = RepoFormatter(config)
+    slack_formatter = SlackFormatter(config, repo_formatter, pull_formatter, name_formatter)
 
     repos = []
 
     for repo in repositories:
         repo_name = repo["repo"]
         git_repo = current_org.get_repo(repo_name)
-        repos += Repo(git_repo)
+        repos.append(Repo(git_repo))
 
     slack_formatter.format_repos(repos=repos)
 
