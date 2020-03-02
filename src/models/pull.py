@@ -35,7 +35,7 @@ class Pull:
     def get_review_users(self):
 
         reviews = self.get_reviews()
-        comments = self.get_comments()()
+        comments = self.get_comments()
 
         approved_users = {}
         changes_requested_users = {}

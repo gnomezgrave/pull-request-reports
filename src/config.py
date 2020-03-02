@@ -49,6 +49,8 @@ class Config:
                 not json_content['repositories']:
             raise Exception("'repositories' is a required property and it's missing")
 
+        self.show_open_pr_count = json_content.get('show_open_pr_count', False)
+
         repos = json_content['repositories']
 
         self.min_approvals = json_content.get(
