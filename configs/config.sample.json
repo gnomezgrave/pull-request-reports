@@ -1,6 +1,15 @@
 {
   "organization": "my-org",
   "global_min_approvals": 2,
+  "pr_duration_warnings": {
+    "show_warnings": true,
+    "warnings": [
+      [2, ":innocent:"],
+      [7, ":thinking_face:"],
+      [14, ":cry:"],
+      [21, ":police_siren:"]
+    ]
+  },
   "show_open_since": true,
   "show_open_pr_count": true,
   "max_names_limit": 2,
