@@ -6,8 +6,10 @@ from config import Config
 
 from models import Repo
 from formatters import NameFormatter, PullFormatter, RepoFormatter
+from formatters.slack import SlackFormatter
 
 NAME_LIST_LIMIT = 3
+
 
 def handler(event, context, resources=os.environ):
 
@@ -35,14 +37,18 @@ def handler(event, context, resources=os.environ):
     total_pr_count = 0
 
     name_formatter = NameFormatter()
+    slack_formatter = SlackFormatter()
     pull_formatter = PullFormatter(config, name_formatter)
     repo_formatter = RepoFormatter(config, pull_formatter)
+
+    repos = []
 
     for repo in repositories:
         repo_name = repo["repo"]
         git_repo = current_org.get_repo(repo_name)
-        repo = Repo(git_repo)
-        repo_formatter.format(repo=repo)
+        repos += Repo(git_repo)
+
+    slack_formatter.format_repos(repos=repos)
 
     if total_pr_count == 0:
         print("No open PRs. Good job!")

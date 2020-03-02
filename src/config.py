@@ -50,6 +50,7 @@ class Config:
             raise Exception("'repositories' is a required property and it's missing")
 
         repos = json_content['repositories']
+
         self.min_approvals = json_content.get(
             'global_min_approvals',
             GLOBAL_MIN_APPROVALS)
@@ -73,14 +74,12 @@ class Config:
             self.emojis = DEFAULT_EMOJIS
         else:
             emojis = json_content['emojis']
-            self.emojis = [
-                    {
+            self.emojis = {
                         emoji_type:
                         emojis[emoji_type] if emoji_type in emojis.keys() 
                         else emoji
-                    }
-                    for emoji_type, emoji in DEFAULT_EMOJIS.items()
-                ]
+                        for emoji_type, emoji in DEFAULT_EMOJIS.items()
+                        }
         
         self.slack_mappings = json_content['users']['slack_mapping'] \
             if 'users' in json_content and json_content['users']['slack_mapping'] \
