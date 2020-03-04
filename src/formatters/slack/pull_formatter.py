@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class PullFormatter:
     def __init__(self, config):
         self._config = config

@@ -4,4 +4,4 @@ class RepoFormatter:
 
     def format(self, repo, pr_count):
 
-        return f"<{repo.name}|{repo.url}>" + f" ({pr_count})" if self._config.show_open_pr_count else ""
+        return f"<{repo.url}|*{repo.name}*>" + f" ({pr_count})" if self._config.show_open_pr_count else ""

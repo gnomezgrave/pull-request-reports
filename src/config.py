@@ -51,15 +51,11 @@ class Config:
 
         self.show_open_pr_count = json_content.get('show_open_pr_count', False)
         self.show_open_since = json_content.get('show_open_since', False)
-
-
         self.min_approvals = json_content.get('global_min_approvals', GLOBAL_MIN_APPROVALS)
-
-
         self.show_pr_warnings = json_content['pr_duration_warnings'].get('show_warnings', False)
         self.pr_warning_limits = json_content['pr_duration_warnings'].get('warnings', [])
-
         self.max_names_limit = json_content.get('max_names_limit', 2)
+        self.ignore_repos_with_zero_prs = json_content.get('ignore_repos_with_zero_prs', True)
 
         self.repositories = []
 
