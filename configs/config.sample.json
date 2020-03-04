@@ -13,6 +13,7 @@
   "show_open_since": true,
   "show_open_pr_count": true,
   "max_names_limit": 2,
+  "ignore_repos_with_zero_prs": true,
   "repositories": [
     {
       "repo": "my-repo",

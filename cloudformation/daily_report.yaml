@@ -15,7 +15,7 @@ Parameters:
   ConfigFile:
     Type: String
     Description: The config file for the notifications
-    Default: configs/pr-notify-config.json
+    Default: configs/config.json
   Owner:
     Type: String
     Description: The name of the owner, used to separate the Glue scripts
@@ -61,7 +61,7 @@ Resources:
       FunctionName: !Sub
         - ${StackName}--pr-notify
         - { StackName: !Ref "AWS::StackName" }
-      Handler: pr_notify.lambda.handler
+      Handler: main.handler
       MemorySize: !Sub ${MemorySize}
       ReservedConcurrentExecutions: 1
       Role: !GetAtt PRNotifyLambdaRole.Arn
