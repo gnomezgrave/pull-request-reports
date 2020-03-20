@@ -7,11 +7,12 @@ class PullFormatter:
 
     def format(self, pull, name_formatter):
         min_pr_approvals = self._config.min_approvals
-        pull_created_date = pull.created_at.date
-        delta = date.today() - pull_created_date
+        pull_created_date = pull.created_at.date()
+        today = date.today()
+        delta = today - pull_created_date
 
         if self._config.show_open_since:
-            date_suffix = self._get_dates_diff_str(date.today(), pull_created_date)
+            date_suffix = self._get_dates_diff_str(today, pull_created_date)
         else:
             date_suffix = pull.created_at.strftime('%Y-%b-%d')
 
@@ -44,7 +45,7 @@ class PullFormatter:
 
         return f"\t{pull_title}{description}"
 
-    def _get_dates_diff_str(self, pr_open_date, today_date):
+    def _get_dates_diff_str(self, today_date, pr_open_date):
         date_delta = today_date - pr_open_date
         if date_delta.days == 0:
             return "today"
