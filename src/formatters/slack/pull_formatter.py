@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 
 
 class PullFormatter:
@@ -7,10 +7,11 @@ class PullFormatter:
 
     def format(self, pull, name_formatter):
         min_pr_approvals = self._config.min_approvals
-        delta = datetime.today() - pull.created_at
+        pull_created_date = pull.created_at.date
+        delta = date.today() - pull_created_date
 
         if self._config.show_open_since:
-            date_suffix = self._get_dates_diff_str(delta)
+            date_suffix = self._get_dates_diff_str(date.today(), pull_created_date)
         else:
             date_suffix = pull.created_at.strftime('%Y-%b-%d')
 
@@ -32,9 +33,8 @@ class PullFormatter:
         if len(reviews["approved"]) >= min_pr_approvals:
 
             emoji = self._config.emojis["attention"]
-            mapping = self._config["users"]["slack_mapping"]
             user_login = pull.assignee.login if pull.assignee else pull.user.login
-            slack_name = mapping.get(user_login)
+            slack_name = self._config.slack_mappings.get(user_login)
             if slack_name:
                 slack_name = slack_name.strip("@")
                 slack_name = f"<@{slack_name}>"
@@ -44,8 +44,10 @@ class PullFormatter:
 
         return f"\t{pull_title}{description}"
 
-    def _get_dates_diff_str(self, time_delta):
-        if time_delta.days == 0:
+    def _get_dates_diff_str(self, pr_open_date, today_date):
+        date_delta = today_date - pr_open_date
+        if date_delta.days == 0:
             return "today"
-        elif time_delta.days > 0:
-            return f"{time_delta.days} day{'s' if time_delta.days > 1 else ''} ago"
+        if date_delta.days == 1:
+            return "yesterday"
+        return f"{date_delta.days} day{'s' if date_delta.days > 1 else ''} ago"
