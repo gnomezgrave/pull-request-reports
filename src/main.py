@@ -59,11 +59,12 @@ def handler(event, context, resources=os.environ):
 
     print("Message to SNS: \n", message)
 
-    sns_client.publish(
+    response = sns_client.publish(
         TopicArn=sns_topic,
         Subject=f"{total_pr_count} Pending PRs",
         Message=message
     )
+    return message, response
 
 #
 # params = {
