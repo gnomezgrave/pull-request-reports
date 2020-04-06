@@ -33,7 +33,7 @@ Parameters:
   CronExpression:
     Type: String
     Description: Cron Expression for the PR Notifications
-    Default: "cron(0 9 ? * MON-FRI *)"
+    Default: "cron(0 7 ? * MON-FRI *)"
 
 Resources:
   NotificationSNS:
@@ -71,6 +71,7 @@ Resources:
         CloudWatch:
           Type: Schedule
           Properties:
+            Name: PRNotifyLambdaScheduledEvent
             Schedule: !Ref CronExpression
 
   PRNotifyLambdaRole:
