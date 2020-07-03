@@ -7,9 +7,9 @@ from config import Config
 
 from models import Repo
 from formatters import NameFormatter
-from formatters.slack import PullFormatter, RepoFormatter, SlackFormatter
+from formatters.html import RepoFormatter, PRFormatter
 
-sns_client = boto3.client('sns')
+from targets import SNS
 
 
 def handler(event, context, resources=os.environ):
@@ -17,9 +17,15 @@ def handler(event, context, resources=os.environ):
     token = resources["GITHUB_TOKEN"]
     sns_topic = resources.get("SNS_TOPIC")
     bucket_name = resources.get("BUCKET_NAME")
+    config_file_s3_path = resources.get("CONFIG_FILE_S3_PATH")
     config_file = resources["CONFIG_FILE"]
 
-    config = Config.get_config(config_file)
+    # Load from local
+    config = Config.load_from_local(config_file)
+
+    # If you need to load from S3, uncomment below
+    # config = Config.load_from_s3(bucket_name, config_file_s3_path)
+
     repositories = config.repositories
 
     git = Github(token)
@@ -27,7 +33,7 @@ def handler(event, context, resources=os.environ):
     git_organizations = git.get_user().get_orgs()
     current_org = None
     for org in git_organizations:
-        if org.name == config.organization:
+        if org.login == config.organization:
             current_org = org
             break
 
@@ -35,9 +41,8 @@ def handler(event, context, resources=os.environ):
         raise Exception("Not an authorized org.")
 
     name_formatter = NameFormatter(config)
-    pull_formatter = PullFormatter(config)
-    repo_formatter = RepoFormatter(config)
-    slack_formatter = SlackFormatter(config, repo_formatter, pull_formatter, name_formatter)
+    pull_formatter = PRFormatter(config, name_formatter)
+    repo_formatter = RepoFormatter(config, pull_formatter)
 
     repos = []
 
@@ -50,28 +55,25 @@ def handler(event, context, resources=os.environ):
             print("Error while getting the repo. "
                   f"Make sure the repo you mentioned('{repo}') is correct and/or you have permission to view.")
 
-    message, pr_counts = slack_formatter.format_repos(repos=repos)
+    message, pr_counts = repo_formatter.format(repos=repos)
     total_pr_count = sum(pr_counts.values())
 
     if total_pr_count == 0:
         print("No open PRs. Good job!")
         return
 
-    print("Message to SNS: \n", message)
+    title = f"{total_pr_count} Pending PRs"
 
-    response = sns_client.publish(
-        TopicArn=sns_topic,
-        Subject=f"{total_pr_count} Pending PRs",
-        Message=message
-    )
-    return message, response
+    sns = SNS(sns_topic)
+    return sns.send(title, message)
 
-#
+
 # params = {
-#     "ORGANIZATION": "trivago N.V.",
+#     "ORGANIZATION": "org",
 #     "GITHUB_TOKEN": os.environ["GITHUB_TOKEN"],
-#     "SNS_TOPIC": "arn:aws:sns:eu-west-1:311937351692:consolidation--resources--ppeiris--notifications-topic",
-#     "BUCKET_NAME": "source-consolidation",
+#     "SNS_TOPIC": "some sns topic arn",
+#     "BUCKET_NAME": "bucket with the config file",
+#     "CONFIG_FILE_S3_PATH": "config file name inside the bucket",
 #     "CONFIG_FILE": "configs/config.json"
 # }
 # handler(None, None, params)

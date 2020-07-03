@@ -1,18 +1,4 @@
-import json
-import boto3
-
-
-DEFAULT_EMOJIS = {
-    "approved": ":mcheck:",
-    "changes_requested": ":face_with_symbols_on_mouth:",
-    "commented": ":speech_balloon:",
-    "inactive": ":sleeping:",
-    "attention": ":police_siren:"
-}
-
 GLOBAL_MIN_APPROVALS = 2
-
-s3_client = boto3.client('s3')
 
 
 class Config:
@@ -21,16 +7,22 @@ class Config:
         self._init_configs(json_content)
 
     @staticmethod
-    def get_config(file_name):
-        with open(file_name) as file:
+    def load_from_local(file_name):
+        import json
+
+        with open(file_name, 'r') as file:
             file_content = json.load(file)
 
         return Config(file_content)
 
     @staticmethod
-    def get_config_from_s3(bucket_name, key):
+    def load_from_s3(bucket_name, key, **kwargs):
+        import json
+        import boto3
+
+        s3_client = boto3.client('s3')
         try:
-            response = s3_client.get_object(Bucket=bucket_name, Key=key)
+            response = s3_client.get_object(Bucket=bucket_name, Key=key, **kwargs)
             file_content = json.loads(response["Body"].read())
 
             return Config(file_content)
@@ -65,22 +57,11 @@ class Config:
                 repo['min_approvals'] = self.min_approvals
             self.repositories.append(repo)
 
-        if 'emojis' not in json_content or not json_content['emojis']:
-            self.emojis = DEFAULT_EMOJIS
-        else:
-            emojis = json_content['emojis']
-            self.emojis = {
-                        emoji_type:
-                        emojis[emoji_type] if emoji_type in emojis.keys() 
-                        else emoji
-                        for emoji_type, emoji in DEFAULT_EMOJIS.items()
-                        }
-        
         self.slack_mappings = json_content['users']['slack_mapping'] \
             if 'users' in json_content and json_content['users']['slack_mapping'] \
             else None
 
-    def get_emoji_for_warnings(self, num_days):
+    def get_warning_level(self, num_days):
 
         if not self.pr_warning_limits or num_days < 0:
             return ""

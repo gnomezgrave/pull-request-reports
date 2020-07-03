@@ -5,7 +5,8 @@ class NameFormatter:
     def get_name_list(self, names):
         if not names:
             return None
-        names = list(names.values())
+
+        names = list(names)
 
         if len(names) == 1:
             return names[0]

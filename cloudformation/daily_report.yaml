@@ -3,9 +3,6 @@ Transform: AWS::Serverless-2016-10-31
 Description: Send Open PRs to SNS
 
 Parameters:
-  Organization:
-    Type: String
-    Description: GitHub Organization
   GitHubToken:
     Type: String
     Description: GitHub Token for the API calls
@@ -53,7 +50,6 @@ Resources:
       Description: Sends open PRs list to SNS
       Environment:
         Variables:
-          ORGANIZATION: !Ref Organization
           GITHUB_TOKEN: !Ref GitHubToken
           SNS_TOPIC: !Ref NotificationSNS
           BUCKET_NAME: !Ref BucketName

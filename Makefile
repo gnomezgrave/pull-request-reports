@@ -1,15 +1,21 @@
-BASE_STACK_NAME=slack-git-notify
-BUCKET ?= my-bucket-name
-BUILD_BUCKET?=source-consolidation
+BASE_STACK_NAME=pr-notify
+BUCKET?=my-bucket
+STACK_NAME_SUFFIX?=$(USER)
 
-ORGANIZATION?="my-cool-org"
-
-VPC ?= "base--vpc"
+TEAM=hexmatter
+LOGGER=DEBUG
 
 ifdef TARGET
 	TPL=cloudformation/$(TARGET).yaml
 endif
 
+ifdef ENV
+	OWNER=$(TEAM)
+	STACK_NAME_SUFFIX=$(ENV)
+else
+	ENV=development
+	OWNER=$(USER)
+endif
 
 # CloudFormation stacks do not allow underscores but support dashes. Python package names support underscores
 # but not dashes. The Stackname contains the component name (or TARGET) which is often the same as the package name.
@@ -20,6 +26,8 @@ PACKAGED_TPL=$(TARGET_TPL)-packaged-cloudformation-template.yaml
 sync:
 	mkdir -p _build/
 	cp -R src/* _build/
+	mkdir -p _build/configs
+	cp -R configs/ _build/configs/
 
 build:
 	rm -rf _build && mkdir -p _build
@@ -46,9 +54,9 @@ deploy:
 		--parameter-overrides \
 			Environment=$(ENV) \
 			BucketName=$(BUCKET) \
-			Organization=$(ORGANIZATION) \
 			GitHubToken=$(GITHUB_TOKEN) \
-			VpcName=$(VPC) \
+			Owner=$(OWNER) \
+			LogLevel=$(LOGGER)
 
 release:
 	@$(MAKE) build && $(MAKE) package && $(MAKE) deploy || echo "No changes to be deployed."
@@ -56,9 +64,3 @@ release:
 clean:
 	find . -name "*.pyc" -exec rm -f {} \;
 	rm -rf _build
-
-test-coverage:
-	PYTHONPATH=./src pytest tests/ --cov=src --full-trace
-
-test:
-	PYTHONPATH=./src pytest tests/
