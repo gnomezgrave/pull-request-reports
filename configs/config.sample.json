@@ -4,10 +4,10 @@
   "pr_duration_warnings": {
     "show_warnings": true,
     "warnings": [
-      [2, ":innocent:"],
-      [7, ":thinking_face:"],
-      [14, ":cry:"],
-      [21, ":police_siren:"]
+      [2, "low"],
+      [5, "medium"],
+      [10, "high"],
+      [14, "critical"]
     ]
   },
   "show_open_since": true,
@@ -23,24 +23,5 @@
       "repo": "my-other-repo",
       "min_approvals": 2
     }
-  ],
-  "emojis": {
-    "approved": ":mcheck:",
-    "changes_requested": ":face_with_symbols_on_mouth:",
-    "commented": ":speech_balloon:",
-    "inactive": ":sleeping:",
-    "attention": ":police_siren:"
-  },
-  "notifications": {
-    "users": {
-      "blacklist": ["leave_me_alone"]
-    }
-
-  },
-  "users": {
-    "slack_mapping": {
-      "git_user_1": "slack_handle_1",
-      "git_user_2": "slack_handle_2"
-    }
-  }
+  ]
 }

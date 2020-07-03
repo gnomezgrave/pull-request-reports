@@ -1,6 +1,3 @@
-from models import User
-
-
 class Pull:
     def __init__(self, git_pull):
         self._pull = git_pull
@@ -50,7 +47,7 @@ class Pull:
             user_login = review.user.login
             state = review.state
             if state == "COMMENTED" and user_login not in commented_users:
-                commented_users[user_login] = self._get_user_name(review.user)
+                commented_users[user_login] = self.get_user_name(review.user)
 
             if state == "APPROVED" or state == "CHANGES_REQUESTED":
                 if user_login not in latest_reviews.keys() or \
@@ -60,14 +57,14 @@ class Pull:
         for comment in comments:
             user_login = comment.user.login
             if user_login not in commented_users:
-                commented_users[user_login] = self._get_user_name(comment.user)
+                commented_users[user_login] = self.get_user_name(comment.user)
 
         for user_login, review in latest_reviews.items():
 
             if review.state == "APPROVED" and user_login not in approved_users:
-                approved_users[user_login] = self._get_user_name(review.user)
+                approved_users[user_login] = self.get_user_name(review.user)
             if review.state == "CHANGES_REQUESTED" and user_login not in changes_requested_users:
-                changes_requested_users[user_login] = self._get_user_name(review.user)
+                changes_requested_users[user_login] = self.get_user_name(review.user)
 
         comments_only = {
             user_login: user_name
@@ -75,7 +72,7 @@ class Pull:
             if user_login not in latest_reviews.keys()
         }
 
-        owner_login = self._get_owner_login()
+        owner_login = self.get_owner_login()
         if owner_login in comments_only:
             del comments_only[owner_login]
 
@@ -92,11 +89,14 @@ class Pull:
         }
         return result
 
-    def _get_user_name(self, git_user):
+    def get_user_name(self, git_user):
         return git_user.name if git_user.name else git_user.login
 
-    def _get_owner_login(self):
-        return self._pull.assignee.login if self._pull.assignee else self._pull.user.login
+    def get_owner_login(self):
+        return self.get_owner().login
+
+    def get_owner(self):
+        return self._pull.assignee if self._pull.assignee else self._pull.user
 
     def _get_all_requested_reviewers(self, except_assignee=True):
         review_requests = self.get_review_requests()
@@ -106,7 +106,7 @@ class Pull:
         reviewers_dict = {}
 
         for user in users:
-            reviewers_dict[user.login] = self._get_user_name(user)
+            reviewers_dict[user.login] = self.get_user_name(user)
 
         for team in teams:
             members = team.get_members()
@@ -114,7 +114,7 @@ class Pull:
                 reviewers_dict[member.login] = member.name
 
         if except_assignee:
-            owner_login = self._get_owner_login()
+            owner_login = self.get_owner_login()
             if owner_login in reviewers_dict:
                 del reviewers_dict[owner_login]
 

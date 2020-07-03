@@ -1,45 +1,51 @@
 {
-  "organization": "my-org",
+  "organization": "trivago N.V.",
   "global_min_approvals": 2,
   "pr_duration_warnings": {
     "show_warnings": true,
     "warnings": [
-      [2, ":innocent:"],
-      [7, ":thinking_face:"],
-      [14, ":cry:"],
-      [21, ":police_siren:"]
+      [2, "low"],
+      [5, "medium"],
+      [10, "high"],
+      [14, "critical"]
     ]
   },
   "show_open_since": true,
   "show_open_pr_count": true,
   "max_names_limit": 2,
+  "ignore_repos_with_zero_prs": true,
   "repositories": [
     {
-      "repo": "my-repo",
+      "repo": "accommodation-consolidation",
       "min_approvals": 2
     },
     {
-      "repo": "my-other-repo",
+      "repo": "accommodation-identification",
+      "min_approvals": 2
+    },
+    {
+      "repo": "geolocator",
+      "min_approvals": 2
+    },
+    {
+      "repo": "snapshooter",
       "min_approvals": 2
     }
   ],
-  "emojis": {
-    "approved": ":mcheck:",
-    "changes_requested": ":face_with_symbols_on_mouth:",
-    "commented": ":speech_balloon:",
-    "inactive": ":sleeping:",
-    "attention": ":police_siren:"
-  },
   "notifications": {
     "users": {
-      "blacklist": ["leave_me_alone"]
+      "blacklist": ["pcremeer"]
     }
 
   },
   "users": {
     "slack_mapping": {
-      "git_user_1": "slack_handle_1",
-      "git_user_2": "slack_handle_2"
+      "b00giZm": "pcremeer",
+      "gnomezgrave": "ppeiris",
+      "nikhilkuria": "nkuriakose",
+      "trivago-jlopez": "jlopez",
+      "paultrv": "pneustadt",
+      "pankhuri-rajiv": "prajiv"
     }
   }
 }
