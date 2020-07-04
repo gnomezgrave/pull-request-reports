@@ -50,7 +50,7 @@ The example config file is placed inside `configs` as `config.sample.json` and y
 ```
 
 * `organization` (string)  
-    Unique name (login name) of the organization you want to work with. i.e. https://github.com/<organization>/  
+    Unique name (login name) of the organization you want to work with. i.e. https://github.com/organization/  
 * `global_min_approvals` (int)  
     How many minimum number of approvals required for a PR to be able to merge. When a repository section doesn't have `min_approvals`
     defined, this value is used. This parameter is only used to notify the owner of the PR.
@@ -60,7 +60,8 @@ The example config file is placed inside `configs` as `config.sample.json` and y
         Whether to show warning emojis when the PR is getting old.
     * `warnings`  
         List of pairs representing the stages of the PR warning according to the number of days since it was open.  
-        i.e. `[2, "low"]` --> Any PR open for 2 days or less will be marked as `low`.   
+        
+        i.e. `[2, "low"]` --> Any PR open for 2 days or less will be marked as `low`.  
         If it's more than 2 days, it will be caught by `[5, "medium"]` and will be marked as `medium` if it's open for 5 days or less.   
         You have the flexibility of adding more warning levels (with number of days), but make sure the label (second element) is unique.
 
@@ -75,8 +76,8 @@ The example config file is placed inside `configs` as `config.sample.json` and y
 * `max_names_limit` (int)  
     How many GitHub usernames should be shown before getting truncated.  
     i.e. If `max_names_limit` is set to 2:  
-        - `Developer 1, Developer 2 and 3 others`  
-        - `Developer 1 and Developer 2`
+        - `Developer X, Developer Y and 3 others` (for five names)  
+        - `Developer X and Developer Y` (for only two names)
 
 * `ignore_repos_with_zero_prs` (boolean)  
     If enabled, repositories with zero open PRs will not be added in the repo.  
@@ -88,6 +89,7 @@ The example config file is placed inside `configs` as `config.sample.json` and y
 #### Where to host the configs.json?
 
 For now, we can put the config file either in an S3 bucket or deploy along with the code.  
+
 You can use `Config.load_from_s3(bucket_name, key)` or `Config.load_from_local(file_name)` functions to load the configs respectively.  
 
 If you're using the local file, pass the config file path as`CONFIG_FILE` parameter.  
@@ -100,7 +102,7 @@ Feel free to add your own ways of reading configs (i.e. a NoSQL table) and make 
 
 ### GitHub Token
 
-You need to generate a Personal Access Token from the [Developer Settings](https://github.com/settings/tokens) in GitHub, and set `GITHUB_TOKEN` environment varibale, to enable this script to read the repositories. 
+You need to generate a Personal Access Token from the [Developer Settings](https://github.com/settings/tokens) in GitHub, and set `GITHUB_TOKEN` environment varibale, to enable this script to read the repositories. Make sure your account (and the token) has permission to read from the given organization and the desired repositories.
 
 **Note**: Make sure you ***ONLY*** give read-only access to the generated token to avoid any accidental changes to the repositories (if you're to change the code).
 
@@ -151,7 +153,10 @@ You can however use this code in any environment such as Amazon EC2/ECS, GCP Fun
 However, no CloudFormation templates are available (yet) for other environments and feel free to create a PR if you like.
 The code is (almost) platform-independent, yet you need to `main.handler` function parameters accordingly.
 
-If you want to use this as a scheduled Lambda function, you can check the deployment section.
+If you want to use this as a scheduled Lambda function, you can check the Deployment section.
+
+
+**Note**: When you deploy, make sure the environment (Lambda, ECS etc.) has relavant permission to read the configs and write to the provided target.
 
 ## How to deploy?
 
