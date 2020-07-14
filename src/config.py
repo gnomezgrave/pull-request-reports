@@ -57,9 +57,7 @@ class Config:
                 repo['min_approvals'] = self.min_approvals
             self.repositories.append(repo)
 
-        self.slack_mappings = json_content['users']['slack_mapping'] \
-            if 'users' in json_content and json_content['users']['slack_mapping'] \
-            else None
+        self.slack_mapping = json_content['slack_mapping']
 
     def get_warning_level(self, num_days):
 

@@ -33,8 +33,8 @@ class BasePRFormatter:
         approved_count = len(reviews.get("approved", {}))
         if approved_count >= min_pr_approvals:
             emoji = review_type_emojis["attention"]
-            user = pull.assignee if pull.assignee else pull.user
-            user = user.name if user.name else user.login
+            user = pull.get_owner_login()
+            user = self._get_mapped_user_name(user, pull.get_owner_display_name())
             description += f"{self._tab()}{emoji} {user} --> {self._merge_message()} {self._new_line()}"
         return f"{self._tab()}{pull_title}{self._new_line()}{description}"
 
@@ -50,6 +50,9 @@ class BasePRFormatter:
         else:
             date_suffix = pull_request.created_at.strftime('%Y-%b-%d')
         return date_suffix, delta
+
+    def _get_mapped_user_name(self, user_login, user_display_name):
+        return user_display_name if user_display_name else user_login
 
     def _merge_message(self):
         return f"Please Merge!"

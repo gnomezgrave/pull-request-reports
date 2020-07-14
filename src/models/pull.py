@@ -95,6 +95,10 @@ class Pull:
     def get_owner_login(self):
         return self.get_owner().login
 
+    def get_owner_display_name(self):
+        git_user = self.get_owner()
+        return git_user.name if git_user.name else git_user.login
+
     def get_owner(self):
         return self._pull.assignee if self._pull.assignee else self._pull.user
 

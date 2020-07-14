@@ -23,5 +23,9 @@
       "repo": "my-other-repo",
       "min_approvals": 2
     }
-  ]
+  ],
+  "slack_mapping": {
+    "gnomezgrave": "ppeiris",
+    "git_user": "slack_user"
+  }
 }
