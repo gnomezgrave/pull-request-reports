@@ -12,7 +12,7 @@ Parameters:
   ConfigFile:
     Type: String
     Description: The config file for the notifications
-    Default: configs/config.json
+    Default: configs/pr-reports-config.json
   Owner:
     Type: String
     Description: The name of the owner, used to separate the Glue scripts

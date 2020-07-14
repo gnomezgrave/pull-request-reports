@@ -135,4 +135,4 @@ dmypy.json
 .vscode
 
 # Project Config
-configs/config.json
+configs/pr-reports-config.json
