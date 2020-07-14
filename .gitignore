@@ -133,3 +133,6 @@ dmypy.json
 # Projects
 .idea
 .vscode
+
+# Project Config
+configs/config.json
