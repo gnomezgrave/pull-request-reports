@@ -115,7 +115,7 @@ class Pull:
         for team in teams:
             members = team.get_members()
             for member in members:
-                reviewers_dict[member.login] = member.name
+                reviewers_dict[member.login] = self.get_user_name(member)
 
         if except_assignee:
             owner_login = self.get_owner_login()
